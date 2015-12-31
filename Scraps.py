@@ -147,4 +147,4 @@ def main(jobs):
 
     print items
     parser.graph_parsed_data(username, api_key)
-main(["python analyst", "civil engineer", "python"])
+main(["python analyst"])
