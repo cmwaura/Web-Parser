@@ -4,25 +4,26 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 import plotly.tools as tls
 
+
 class SalaryEstimates:
+    def __init__(self):
+        pass
 
     def salary_parser(self, soup):
+        '''
+        :param soup: beautiful soup object defined at the main module.
+        :return: returns a pandas DataFrame
+        '''
 
         rx = re.compile('([+(),])')
-        print "---------------------------------------------------------------------------------"
-        print "---------------------------------------------------------------------------------"
-        print " ----------------------T-A-B-L-E-S-----------------------------------------------"
-        print "---------------------------------------------------------------------------------"
-
-
         for post in soup.find_all("ul", {"class":"rbList"}):
-            # return post
+
             figures = post.get_text(' ', strip=True)
             figures = list(rx.sub(r'', figures).replace(' ', ', ').split())
 
-            quantity = [(elem).replace(',','') for elem in figures if '$' not in elem]
+            quantity = [elem.replace(',','') for elem in figures if '$' not in elem]
 
-            salary = [(elem).replace('$', '').replace(',','') for elem in figures if '$' in elem]
+            salary = [elem.replace('$', '').replace(',','') for elem in figures if '$' in elem]
 
             d = {'Salary from jobs': pd.Series(salary, index=['a', 'b', 'c','d','e']),
                  'Quantity': pd.Series(quantity, index=['a', 'b', 'c', 'd', 'e'])}
@@ -37,22 +38,26 @@ class SalaryEstimates:
             return self.df5
 
     def graphing_salary(self, username, api_key):
+        '''
 
-            # username= "cmwaura"
-            # api_key ="543mnm6vz9"
+        :param username: str. This is the Plotly api username that you gave beforehand
+        :param api_key: str. Plotly api_key
+        :return: graphical output of the job selected.
+        '''
 
-            tls.set_credentials_file(username=username, api_key=api_key)
-            # for table in self.df5:
-            data = [
-                go.Scatter(
-                    x=self.df5['Quantity'],
-                    y=self.df5['Salary from jobs']
+        # authorizing the user Plotly credentials
+        tls.set_credentials_file(username=username, api_key=api_key)
 
-                )
-            ]
-            final_graph = py.plot(data, filename='pandas/basic-bar')
-            # salary_graph = py.plot(data, filename='pandas/basic-bar', auto_open=False )
-            return final_graph
+        # creating a Plotly scatter object
+        data = [
+            go.Scatter(
+                x=self.df5['Quantity'],
+                y=self.df5['Salary from jobs']
+
+            )
+        ]
+        final_graph = py.plot(data, filename='pandas/basic-bar')
+        return final_graph
 
 
 
